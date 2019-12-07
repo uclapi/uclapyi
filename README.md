@@ -7,7 +7,19 @@ pip install -e git+git://github.com/uclapi/uclapyi@master#egg=uclapyi
 
 # But how do i use it?
 
-Using this package is designed to be simple. The first step is to initialise a client. You can do this by first importing this ``` from uclapyi.uclapyi import Client ```. You can then initialise it by doing ``` client = Client(token="YOUR-TOKEN-HERE") ```. Now we can make requests by accessing endpoints like functions. For example to get bookings for a room with id 443 and site_id 086 we would do ```bookings = client.roombookings.bookings(roomid="433",siteid="086",results_per_page=10)```. All pagination is handled for you as a generator and supports indexing. This allows you to do things like:
+Using this package is designed to be simple. The first step is to initialise a client. You can do this by first importing it:
+```python
+from uclapyi.uclapyi import Client
+```
+You can then initialise it:
+```python
+client = Client(token="YOUR-TOKEN-HERE")
+```
+Now we can make requests by accessing endpoints like functions. For example to get bookings for a room with id 443 and site_id 086 we would do:
+```python
+bookings = client.roombookings.bookings(roomid="433",siteid="086",results_per_page=10)
+```
+All pagination is handled for you as a generator and supports indexing. This allows you to do things like:
 ```python
 for booking in bookings:
   print(booking.contact)
