@@ -32,3 +32,22 @@ This prints out who booked the room, what the capacity is and the equipment avai
 # Is there an dis-advantage of this over raw HTTP requests?
 
 This is a good question and yes there is. Since this wrapper makes everything into an object there is a time cost to converting the data into this form. For example when you get bookings we give you a list of Booking objects, which you can query to get the Room object associated with it. This is apposed to just a dictionary of strings and such that the normal endpoint would return in JSON format.
+
+# Limitations holding us back
+
+You might wonder. Whats stopping us from linking everything like Bookings and Rooms. For example can we link desktops and rooms? This shows a problem with inconsistency in UCL data. For example:
+```python
+desktops = client.resources.desktops()
+desktop = desktops[0]
+room = client.roombookings.rooms(sitename=desktop.building_name)
+print(desktop.roomname)
+for r in room:
+  if "Public Cluster" in r.roomname:
+    print(r.roomname)
+```
+This gives us the output:
+```
+Basement-B115A
+Cruciform Building B1.15A - Public Cluster
+```
+This shows that the room name in the desktop database and the bookings database is unfortunately not the same.
