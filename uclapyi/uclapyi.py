@@ -1,4 +1,6 @@
 import requests
+import pytz
+import datetime
 
 class BadResponseError(Exception):
     pass
@@ -50,6 +52,23 @@ class Client:
             for equipment in result["equipment"]:
                 equipments.append(Equipment(equipment))
             return equipments
+
+        def freerooms(self, start_datetime, end_datetime):
+            start = start_datetime.astimezone(pytz.utc)
+            end = end_datetime.astimezone(pytz.utc)
+            params = {}
+            params["token"] = self.client.token
+            params["start_datetime"] = start.isoformat()
+            params["end_datetime"] = end.isoformat()
+
+            result = requests.get("https://uclapi.com/roombookings/freerooms", params=params).json()
+            if not result["ok"]:
+                raise BadResponseError
+            free_rooms = []
+            for room in result["free_rooms"]:
+                free_rooms.append(Room(room))
+            return free_rooms
+
 
 class Bookings:
     def __init__(self, result, token):
