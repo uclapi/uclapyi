@@ -12,6 +12,7 @@ class Client:
         self.secret = client_secret
         self.id = client_id
         self.roombookings = self.roombookings(self)
+        self.search = self.search(self)
 
     class roombookings:
 
@@ -69,6 +70,21 @@ class Client:
                 free_rooms.append(Room(room))
             return free_rooms
 
+    class search:
+
+        def __init__(self, client):
+            self.client = client
+
+        def people(self, query):
+            params = {"query":query}
+            params["token"] = self.client.token
+            result = requests.get("https://uclapi.com/search/people", params=params).json()
+            if not result["ok"]:
+                raise BadResponseError
+            people = []
+            for person in result["people"]:
+                people.append(Person(person))
+            return people
 
 class Bookings:
     def __init__(self, result, token):
@@ -170,3 +186,10 @@ class Equipment:
         self.type = equipment["type"]
         self.description = equipment["description"]
         self.units = equipment["units"]
+
+class Person:
+    def __init__(self, person):
+        self.name = person["name"]
+        self.status = person["status"]
+        self.department = person["department"]
+        self.email = person["email"]
