@@ -37,7 +37,7 @@ class Client:
             bookings = []
             if not result["ok"]:
                 raise BadResponseError
-            return Bookings(result["bookings"])
+            return Bookings(result, self.client.token)
 
         def equipment(self, **kwargs):
             params = kwargs
@@ -52,13 +52,51 @@ class Client:
             return equipments
 
 class Bookings:
-    def __init__(self, bookings):
-        self.bookings = []
-        for booking in bookings:
-            self.bookings.append(Booking(booking))
+    def __init__(self, result, token):
+        self._bookings = []
+        self.token = token
+        for booking in result["bookings"]:
+            self._bookings.append(Booking(booking))
+        self._count = result["count"]
+        self._current = 0
+        self._next_page = result["next_page_exists"]
+        if self._next_page:
+            self._page_token = result["page_token"]
 
-    def __iter__():
-        pass
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._current == self._count:
+            raise StopIteration
+        if self._current < len(self._bookings):
+            self._current += 1
+            return self._bookings[self._current-1]
+        else:
+            params = {}
+            params["token"] = self.token
+            params["page_token"] = self._page_token
+            result = requests.get("https://uclapi.com/roombookings/bookings", params=params).json()
+            self._next_page = result["next_page_exists"]
+            if self._next_page:
+                self._page_token = result["page_token"]
+            for booking in result["bookings"]:
+                self._bookings.append(Booking(booking))
+            self._current += 1
+            return self._bookings[self._current-1]
+
+    def __getitem__(self, index):
+        try:
+            max_idx = index.stop
+        except AttributeError:
+            max_idx = index
+        n = max_idx - len(self._bookings) + 1
+        if n > 0:
+            self._bookings.extend(itertools.islice(self, n))
+        return self._bookings[index]
+
+    def __len__():
+        return self._count
 
 class Room:
     def __init__(self, room):
