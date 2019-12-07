@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="uclapyi-uclapi", # Replace with your own username
+    name="uclapyi",
     version="0.0.1",
     author="UCLAPI",
     author_email="isd.apiteam@ucl.ac.uk",
