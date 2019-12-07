@@ -7,7 +7,7 @@ class BadResponseError(Exception):
 
 class Client:
 
-    def __init__(self, token, client_secret, client_id):
+    def __init__(self, token, client_secret=None, client_id=None):
         self.token = token
         self.secret = client_secret
         self.id = client_id
@@ -153,7 +153,7 @@ class Booking:
         self.description = booking["description"]
         self.roomname = booking["roomname"]
         self.siteid = booking["siteid"]
-        self.contant = booking["contact"]
+        self.contact = booking["contact"]
         self.weeknumber = booking["weeknumber"]
         self.roomid = booking["roomid"]
         self.start_time = booking["start_time"]
