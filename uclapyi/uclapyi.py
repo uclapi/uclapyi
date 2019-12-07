@@ -13,6 +13,7 @@ class Client:
         self.id = client_id
         self.roombookings = self.roombookings(self)
         self.search = self.search(self)
+        self.resources = self.resources(self)
 
     class roombookings:
 
@@ -85,6 +86,22 @@ class Client:
             for person in result["people"]:
                 people.append(Person(person))
             return people
+
+    class resources:
+
+        def __init__(self, client):
+            self.client = client
+
+        def desktops(self):
+            params = {}
+            params["token"] = self.client.token
+            result = requests.get("https://uclapi.com/resources/desktops", params=params).json()
+            if not result["ok"]:
+                raise BadResponseError
+            desktops = []
+            for desktop in result["data"]:
+                desktops.append(Desktop(desktop))
+            return desktops
 
 class Bookings:
     def __init__(self, result, token):
@@ -193,3 +210,16 @@ class Person:
         self.status = person["status"]
         self.department = person["department"]
         self.email = person["email"]
+
+class Desktop:
+    def __init__(self, desktop):
+        self.room_status = desktop["room_status"]
+        self.total_seats = desktop["total_seats"]
+        self.free_seats = desktop["free_seats"]
+        self.roomname = desktop["location"]["roomname"]
+        self.room_id = desktop["location"]["room_id"]
+        self.building_name = desktop["location"]["building_name"]
+        location = {}
+        location["coordinates"] = {"lat": desktop["location"]["latitude"], "lng": desktop["location"]["longitude"]}
+        location["address"] = desktop["location"]["address"].split(", ") + [desktop["location"]["postcode"]]
+        self.location = Location(location)
