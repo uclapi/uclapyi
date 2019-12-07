@@ -1,6 +1,6 @@
 # A python client library for UCL API
 
-What this does is allows easier access to the UCL API, without having to manually deal with HTTP requests yourself. This makes start-up time for developing applications quicker meaning hackathon and prototype projects can be constructed quickly.
+What this does is allows easier access to the UCL API, without having to manually deal with HTTP requests yourself. This makes start-up time for developing applications quicker meaning hackathon and prototype projects can be constructed quickly. To install this you can do ``` pip install -e git+git://github.com/uclapi/uclapyi@master#egg=uclapyi ```
 
 # Is there an dis-advantage of this over raw HTTP requests?
 
